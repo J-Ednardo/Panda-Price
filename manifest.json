@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Xianyu Helper BR",
+  "version": "1.0",
+  "description": "Converte preços em Yuan para Real e bloqueia pop-ups de login no Xianyu",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://*.xianyu.taobao.com/*",
+    "https://2.taobao.com/*",
+    "https://*.taobao.com/*",
+    "https://*.alibaba.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.xianyu.taobao.com/*",
+        "https://2.taobao.com/*",
+        "https://*.taobao.com/*",
+        "https://www.goofish.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
