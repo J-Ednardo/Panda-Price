@@ -51,4 +51,4 @@ O Xianyu pode atualizar as classes CSS dos pop-ups. Se o bloqueador parar de fun
 ## Notas
 
 - A cotação não é atualizada automaticamente — você precisa atualizar manualmente no popup
-- A extensão funciona nos domínios `*.xianyu.taobao.com`, `2.taobao.com` e `*.taobao.com`
+- A extensão funciona nos domínios `*.xianyu.taobao.com`, `2.taobao.com`, `*.taobao.com` e `*.goofish.com`
