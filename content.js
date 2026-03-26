@@ -268,55 +268,86 @@ function convertElement(el) {
   }
 
   let text = (el.innerText || el.textContent || '').trim();
-  let match = YUAN_REGEX.exec(text);
-  
-  // Se não achou o símbolo no próprio elemento, faz uma verificação de contexto
-  if (!match) {
-    // Só tenta o contexto se o texto for puramente numérico
-    if (/^(\d+(?:[.,]\d{1,2})?)$/.test(text)) {
-      
-      // Verifica se o pai já foi marcado (evita a duplicação que você notou)
-      if (el.parentElement && el.parentElement.getAttribute(PROCESSED_ATTR)) {
-        el.setAttribute(PROCESSED_ATTR, 'true');
-        return;
-      }
+  if (!text) return;
 
-      const parentText = el.parentElement ? el.parentElement.innerText : '';
-      const prevText = el.previousElementSibling ? el.previousElementSibling.innerText : '';
-      
-      // Verifica o símbolo no contexto, mas garante que não estamos pegando um badge já injetado
-      const hasSymbolInContext = (/[¥￥元]/.test(parentText) && !parentText.includes('≈ R$')) || 
-                                 (/[¥￥]/.test(prevText));
+  const numPart = '\\d+(?:[.,]\\d{1,2})?';
+  // Regex para range com símbolos (¥ 10 - 20, ¥ 10 - ¥ 20, 10 - 20 元)
+  const rangeWithSymbol = new RegExp(`(?:[¥￥]\\s*)(${numPart})\\s*-\\s*(?:[¥￥]\\s*)?(${numPart})|(${numPart})\\s*-\\s*(${numPart})(?:\\s*元)`);
+  // Regex para range puro (10 - 20)
+  const rangePure = new RegExp(`^(${numPart})\\s*-\\s*(${numPart})$`);
+  // Regex para número puro
+  const numPure = new RegExp(`^${numPart}$`);
 
-      if (hasSymbolInContext && parentText.length < 30) {
-        match = [text, text]; 
+  let yuan1, yuan2;
+  let isRange = false;
+  let match;
+
+  // Tenta detectar range com símbolo primeiro
+  match = rangeWithSymbol.exec(text);
+  if (match) {
+    yuan1 = parseFloat((match[1] || match[3]).replace(',', '.'));
+    yuan2 = parseFloat((match[2] || match[4]).replace(',', '.'));
+    isRange = true;
+  } else {
+    // Tenta detectar preço único com símbolo
+    match = YUAN_REGEX.exec(text);
+    if (match) {
+      const rawValue = match[1] || match[2] || (match[0].replace(/[¥￥元\s]/g, ''));
+      yuan1 = parseFloat(rawValue.replace(',', '.'));
+    } else {
+      // Tenta detectar se é um número puro ou range puro dentro de um contexto de preço
+      const isP = numPure.test(text);
+      const isR = rangePure.test(text);
+      
+      if (isP || isR) {
+        if (el.parentElement && el.parentElement.getAttribute(PROCESSED_ATTR)) {
+          el.setAttribute(PROCESSED_ATTR, 'true');
+          return;
+        }
+
+        const parentText = el.parentElement ? el.parentElement.innerText : '';
+        const prevText = el.previousElementSibling ? el.previousElementSibling.innerText : '';
+        
+        const hasSymbolInContext = (/[¥￥元]/.test(parentText) && !parentText.includes('≈ R$')) || 
+                                   (/[¥￥]/.test(prevText));
+
+        if (hasSymbolInContext && parentText.length < 50) {
+          if (isR) {
+            const rMatch = rangePure.exec(text);
+            yuan1 = parseFloat(rMatch[1].replace(',', '.'));
+            yuan2 = parseFloat(rMatch[2].replace(',', '.'));
+            isRange = true;
+          } else {
+            yuan1 = parseFloat(text.replace(',', '.'));
+          }
+        }
       }
     }
   }
 
-  if (!match) return;
+  if (isNaN(yuan1) || yuan1 <= 0) return;
 
-  const rawValue = match[1] || match[2] || (match[0].replace(/[¥￥元\s]/g, ''));
-  const yuan = parseFloat(rawValue.replace(',', '.'));
-  
-  if (isNaN(yuan) || yuan <= 0) return;
+  // Cálculo da conversão
+  const brl1 = (yuan1 * settings.yuanRate).toFixed(2);
+  let brlDisplay = brl1;
 
-  const brl = (yuan * settings.yuanRate).toFixed(2);
+  if (isRange && !isNaN(yuan2)) {
+    const brl2 = (yuan2 * settings.yuanRate).toFixed(2);
+    brlDisplay = `${brl1} - ${brl2}`;
+  }
 
   // 3. LOGICA DE DIMENSIONAMENTO INTELIGENTE
   const originalStyle = window.getComputedStyle(el);
   const fontSizeNum = parseFloat(originalStyle.fontSize) || 14;
-  const isMini = fontSizeNum < 16; // Preços menores que 16px geralmente estão em cards pequenos
+  const isMini = fontSizeNum < 16;
 
   // Criar o badge pílula
   const badge = document.createElement('span');
   badge.className = 'xianyu-brl-badge';
-  badge.setAttribute('data-yuan', yuan);
+  badge.setAttribute('data-yuan', yuan1);
   
-  // No modo mini, removemos o "≈" para economizar espaço
-  badge.textContent = isMini ? `R$ ${brl}` : ` ≈ R$ ${brl}`;
+  badge.textContent = isMini ? `R$ ${brlDisplay}` : ` ≈ R$ ${brlDisplay}`;
   
-  // Estilo dinâmico baseado no tamanho detectado
   const padding = isMini ? '1px 6px' : '2px 10px';
   const fontSize = isMini ? '10px' : '12px';
   const margin = isMini ? '4px' : '8px';
