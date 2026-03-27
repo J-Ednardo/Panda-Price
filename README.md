@@ -1,4 +1,4 @@
-# Xianyu Helper BR 🇧🇷
+# Panda Price 🐼
 
 Extensão Chrome para compradores brasileiros em sites chineses (Xianyu / Taobao).
 

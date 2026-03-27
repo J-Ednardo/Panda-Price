@@ -1,5 +1,5 @@
 /**
- * Xianyu Helper BR - content.js
+ * Panda Price - content.js
  * Roda dentro das páginas do Xianyu/Taobao
  * Funções: conversão de preços + bloqueio de pop-up de login
  */
@@ -356,7 +356,7 @@ function convertElement(el) {
     display: inline-block;
     margin-left: ${margin};
     padding: ${padding};
-    background: #2563eb;
+    background: #27ae60;
     color: #ffffff;
     border-radius: 100px;
     font-size: ${fontSize};
@@ -364,7 +364,7 @@ function convertElement(el) {
     font-family: system-ui, -apple-system, sans-serif;
     vertical-align: middle;
     white-space: nowrap;
-    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 1px 3px rgba(39, 174, 96, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: default;
     transition: transform 0.2s ease;

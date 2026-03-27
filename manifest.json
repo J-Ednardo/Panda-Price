@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Xianyu Helper BR",
+  "name": "Panda Price",
   "version": "1.0",
   "description": "Converte preços em Yuan para Real e bloqueia pop-ups de login no Xianyu",
   "permissions": ["storage", "activeTab", "scripting"],

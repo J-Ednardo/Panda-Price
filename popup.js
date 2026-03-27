@@ -36,7 +36,7 @@ document.getElementById('saveBtn').addEventListener('click', () => {
   if (!rate || rate <= 0) {
     const hint = document.getElementById('rate-hint');
     hint.textContent = '⚠ Digite uma cotação válida';
-    hint.style.color = '#e74c3c';
+    hint.style.color = '#e67e22';
     return;
   }
 
