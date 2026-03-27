@@ -1,9 +1,3 @@
-/**
- * Panda Price - content.js
- * Roda dentro das páginas do Xianyu/Taobao
- * Funções: conversão de preços + bloqueio de pop-up de login
- */
-
 let settings = {
   yuanRate: 0,
   enableConversion: true,
