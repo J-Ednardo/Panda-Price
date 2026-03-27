@@ -3,7 +3,7 @@
   "name": "Panda Price",
   "version": "1.0",
   "description": "Converte preços em Yuan para Real e bloqueia pop-ups de login no Xianyu",
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": ["storage", "activeTab"],
   "host_permissions": [
     "https://*.xianyu.taobao.com/*",
     "https://2.taobao.com/*",
