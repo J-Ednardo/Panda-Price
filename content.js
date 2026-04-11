@@ -18,7 +18,6 @@ chrome.runtime.onMessage.addListener((msg) => {
     settings.yuanRate = msg.yuanRate;
     settings.enableConversion = msg.enableConversion;
     settings.blockPopup = msg.blockPopup;
-    // Re-aplica tudo
     if (settings.enableConversion && settings.yuanRate > 0) {
       convertAllPrices();
     }
@@ -38,10 +37,8 @@ function init() {
 
 // ─── 3. BLOQUEIO DE POP-UP DE LOGIN ───────────────────────────────────────
 function setupPopupBlocker() {
-  // Injeta CSS para esconder os overlays e forçar scroll imediatamente
   injectBlockerCSS();
 
-  // MutationObserver para remover do DOM e liberar scroll em tempo real
   const observer = new MutationObserver((mutations) => {
     let shouldUnblock = false;
     for (const mutation of mutations) {
@@ -58,12 +55,10 @@ function setupPopupBlocker() {
     }
     if (shouldUnblock) {
       unblockScroll();
-      // Verifica o body novamente para garantir
       removeLoginPopups(document.body);
     }
   });
 
-  // Observa tanto o body quanto o html para mudanças de atributos (classes/styles)
   observer.observe(document.documentElement, {
     attributes: true,
     attributeFilter: ['class', 'style']
@@ -75,15 +70,13 @@ function setupPopupBlocker() {
     attributeFilter: ['class', 'style']
   });
 
-  // Varredura inicial
   removeLoginPopups(document.body);
   unblockScroll();
 }
 
 function removeLoginPopups(root) {
-  // Seletores comuns de pop-up de login no Xianyu / Taobao
+  // Seletores comuns de pop-up de login
   const selectors = [
-    // Xianyu
     '[class*="login-dialog"]',
     '[class*="loginDialog"]',
     '[class*="login-modal"]',
@@ -93,23 +86,19 @@ function removeLoginPopups(root) {
     '[class*="login-mask"]',
     '[class*="loginMask"]',
     '[class*="login-layer"]',
-    // Genéricos Taobao/Alibaba
     '[class*="J_loginDiag"]',
     '[id*="login-dialog"]',
     '[id*="loginDialog"]',
     '.sufei-dialog-wrap[style*="display: block"]',
     '[class*="sufei-dialog"]',
-    // Overlays de fundo (backdrop)
     '[class*="dialog-mask"][style*="display: block"]',
     '[class*="modal-overlay"]',
-    // Xianyu app-style
     '[class*="fish-login"]',
     '[class*="xianyu-login"]',
     '[class*="idle-login"]',
     '[class*="loginGuide"]',
     '[class*="login-guide"]',
     '[class*="not-login"]',
-    // Botão de fechar se existir
     '[class*="login-close"]'
   ];
 
@@ -117,30 +106,26 @@ function removeLoginPopups(root) {
   try {
     const elements = root.querySelectorAll ? root.querySelectorAll(combined) : [];
     elements.forEach(el => {
-      // Tenta fechar clicando no botão de fechar primeiro
       const closeBtn = el.querySelector('[class*="close"]') ||
                        el.querySelector('[aria-label="close"]') ||
                        el.querySelector('[aria-label="关闭"]');
       if (closeBtn) {
         closeBtn.click();
       }
-      // Remove ou esconde o elemento
       el.style.setProperty('display', 'none', 'important');
       el.style.setProperty('visibility', 'hidden', 'important');
       el.style.setProperty('opacity', '0', 'important');
       el.style.setProperty('pointer-events', 'none', 'important');
     });
 
-    // Se detectou algum elemento de login ou se o scroll estiver travado, força a liberação
     unblockScroll();
   } catch (e) {
-    // Silencioso
+
   }
 }
 
 function unblockScroll() {
   const elements = [document.documentElement, document.body];
-  // Lista expandida de classes que costumam travar o scroll
   const scrollClasses = [
     'modal-open', 'noscroll', 'stop-scroll', 'lock-scroll', 
     'is-locked', 'main-scroll-disabled', 'body-fixed',
@@ -150,19 +135,16 @@ function unblockScroll() {
   elements.forEach(el => {
     if (!el) return;
     
-    // Força overflow auto se estiver escondido ou travado
     const style = window.getComputedStyle(el);
     if (style.overflow === 'hidden' || style.overflowY === 'hidden' || el.style.overflow === 'hidden') {
       el.style.setProperty('overflow', 'auto', 'important');
       el.style.setProperty('overflow-y', 'auto', 'important');
     }
     
-    // Goofish às vezes fixa a altura em 100% para travar
     if (el.style.height === '100%' || el.style.height === '100vh') {
       el.style.setProperty('height', 'auto', 'important');
     }
 
-    // Remove classes conhecidas de bloqueio
     scrollClasses.forEach(cls => {
       if (el.classList.contains(cls)) {
         el.classList.remove(cls);
@@ -218,7 +200,7 @@ function injectBlockerCSS() {
 
 // ─── 4. CONVERSÃO DE PREÇOS ────────────────────────────────────────────────
 
-// Seletores de preço para Xianyu/Taobao - Refinados para serem menos genéricos
+// Seletores de preço para Xianyu
 const PRICE_SELECTORS = [
   '[class*="price"]',
   '[class*="Price"]',
@@ -228,20 +210,16 @@ const PRICE_SELECTORS = [
   '[class*="Cost"]',
   '[class*="money"]',
   '[class*="Money"]',
-  // Específicos Xianyu
   '[class*="fish-price"]',
   '[class*="item-price"]',
   '[class*="sale-price"]',
   '[class*="goods-price"]',
   '[class*="price--"]',
-  '.price-value' // Mais específico que apenas "value"
+  '.price-value' 
 ];
 
-// Regex que EXIGE um símbolo de moeda (antes ou depois)
-// Grupo 1: valor com símbolo antes (¥100)
-// Grupo 2: valor com símbolo depois (100元)
+
 const YUAN_REGEX = /(?:[¥￥]\s*)(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)(?:\s*元)/;
-// Marca para não processar duas vezes
 const PROCESSED_ATTR = 'data-brl-converted';
 
 function convertAllPrices() {
@@ -251,11 +229,8 @@ function convertAllPrices() {
 }
 
 function convertElement(el) {
-  // 1. Bloqueio imediato: se o elemento já foi processado ou é o badge
   if (el.getAttribute(PROCESSED_ATTR) || el.classList.contains('xianyu-brl-badge')) return;
 
-  // 2. Bloqueio de hierarquia: se algum pai/ancestral já foi processado, 
-  // significa que este valor já faz parte de uma conversão maior.
   if (el.parentElement && el.parentElement.closest(`[${PROCESSED_ATTR}]`)) {
     el.setAttribute(PROCESSED_ATTR, 'true');
     return;
@@ -265,31 +240,25 @@ function convertElement(el) {
   if (!text) return;
 
   const numPart = '\\d+(?:[.,]\\d{1,2})?';
-  // Regex para range com símbolos (¥ 10 - 20, ¥ 10 - ¥ 20, 10 - 20 元)
   const rangeWithSymbol = new RegExp(`(?:[¥￥]\\s*)(${numPart})\\s*-\\s*(?:[¥￥]\\s*)?(${numPart})|(${numPart})\\s*-\\s*(${numPart})(?:\\s*元)`);
-  // Regex para range puro (10 - 20)
   const rangePure = new RegExp(`^(${numPart})\\s*-\\s*(${numPart})$`);
-  // Regex para número puro
   const numPure = new RegExp(`^${numPart}$`);
 
   let yuan1, yuan2;
   let isRange = false;
   let match;
 
-  // Tenta detectar range com símbolo primeiro
   match = rangeWithSymbol.exec(text);
   if (match) {
     yuan1 = parseFloat((match[1] || match[3]).replace(',', '.'));
     yuan2 = parseFloat((match[2] || match[4]).replace(',', '.'));
     isRange = true;
   } else {
-    // Tenta detectar preço único com símbolo
     match = YUAN_REGEX.exec(text);
     if (match) {
       const rawValue = match[1] || match[2] || (match[0].replace(/[¥￥元\s]/g, ''));
       yuan1 = parseFloat(rawValue.replace(',', '.'));
     } else {
-      // Tenta detectar se é um número puro ou range puro dentro de um contexto de preço
       const isP = numPure.test(text);
       const isR = rangePure.test(text);
       
@@ -321,7 +290,6 @@ function convertElement(el) {
 
   if (isNaN(yuan1) || yuan1 <= 0) return;
 
-  // Cálculo da conversão
   const brl1 = (yuan1 * settings.yuanRate).toFixed(2);
   let brlDisplay = brl1;
 
@@ -335,7 +303,6 @@ function convertElement(el) {
   const fontSizeNum = parseFloat(originalStyle.fontSize) || 14;
   const isMini = fontSizeNum < 16;
 
-  // Criar o badge pílula
   const badge = document.createElement('span');
   badge.className = 'xianyu-brl-badge';
   badge.setAttribute('data-yuan', yuan1);
