@@ -1,21 +1,18 @@
 # Panda Price 🐼
 
-Extensão Chrome para compradores brasileiros em sites chineses (Xianyu / Taobao).
+Extensão Chrome para compradores brasileiros em sites chineses (Xianyu).
 
 ## Funcionalidades
 
 - 💱 **Conversão de preços** — Coloca o valor em R$ ao lado de cada preço em Yuan (¥)
 - 🚫 **Bloqueio de pop-up de login** — Remove automaticamente os modais que pedem para você logar
 
-## Como instalar (modo desenvolvedor)
+## Como instalar 
 
-1. Crie uma pasta chamada `xianyu-helper` e coloque todos os arquivos dentro
-2. Crie uma subpasta `icons/` e adicione ícones PNG nos tamanhos 16x16, 48x48 e 128x128 (opcional, mas recomendado)
-3. Abra o Chrome e acesse `chrome://extensions`
-4. Ative o **Modo do desenvolvedor** (canto superior direito)
-5. Clique em **"Carregar sem compactação"**
-6. Selecione a pasta `xianyu-helper`
-7. A extensão aparecerá na barra do Chrome!
+1. Acesse a loja de extensões do chrome.
+2. Busque por Panda Price.
+3. Clique em "Usar no Chrome".
+
 
 ## Como usar
 
@@ -40,15 +37,7 @@ xianyu-helper/
 └── README.md
 ```
 
-## Ajustando os seletores de pop-up
-
-O Xianyu pode atualizar as classes CSS dos pop-ups. Se o bloqueador parar de funcionar:
-
-1. Abra o site, clique com botão direito no pop-up → **Inspecionar**
-2. Identifique a classe do elemento (ex: `.new-login-modal`)
-3. Adicione ao array de seletores em `content.js` na função `setupPopupBlocker()`
-
 ## Notas
 
 - A cotação não é atualizada automaticamente — você precisa atualizar manualmente no popup
-- A extensão funciona nos domínios `*.xianyu.taobao.com`, `2.taobao.com`, `*.taobao.com` e `*.goofish.com`
+  
