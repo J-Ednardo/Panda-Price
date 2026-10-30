@@ -1,15 +1,21 @@
 {
   "manifest_version": 3,
   "name": "Panda Price",
-  "version": "1.0",
-  "description": "Converte preços em Yuan para Real e bloqueia pop-ups de login no Xianyu",
-  "permissions": ["storage", "activeTab"],
+  "version": "1.1",
+  "description": "Cotação automática Yuan/Real com spread, tradutor de busca PT → ZH e alertas anti-cilada no Goofish (Xianyu)",
+  "permissions": ["storage", "activeTab", "alarms"],
   "host_permissions": [
-    "https://*.xianyu.taobao.com/*",
-    "https://2.taobao.com/*",
-    "https://*.taobao.com/*",
-    "https://*.alibaba.com/*"
+    "https://goofish.com/*",
+    "https://*.goofish.com/*",
+    "https://economia.awesomeapi.com.br/*",
+    "https://open.er-api.com/*",
+    "https://api.frankfurter.app/*",
+    "https://translate.googleapis.com/*",
+    "https://api.mymemory.translated.net/*"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -21,10 +27,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://*.xianyu.taobao.com/*",
-        "https://2.taobao.com/*",
-        "https://*.taobao.com/*",
-        "https://www.goofish.com/*"
+        "https://goofish.com/*",
+        "https://*.goofish.com/*"
       ],
       "js": ["content.js"],
       "run_at": "document_idle"

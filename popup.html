@@ -5,259 +5,801 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Panda Price</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --lacquer-deep: #110B0A;
+      --lacquer-panel: #1A1210;
+      --lacquer-elevated: #221714;
+      --lacquer-input: #130D0B;
+      --cinnabar: #B82921;
+      --cinnabar-bright: #D43B32;
+      --cinnabar-dark: #6E130E;
+      --gold: #D4AF37;
+      --gold-bright: #EDD07A;
+      --gold-Soft: #C5A049;
+      --gold-dim: rgba(212, 175, 55, 0.25);
+      --gold-border: rgba(212, 175, 55, 0.34);
+      --jade: #3E9E7E;
+      --jade-bright: #63C7A4;
+      --ivory: #F4EBDC;
+      --ivory-muted: #D5C7B2;
+      --ash: #9A8A78;
+      --ash-dark: #6B5D4F;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
-      width: 300px;
-      font-family: 'DM Sans', sans-serif;
-      background: #0d0d0d;
-      color: #f0ede6;
-      overflow: hidden;
+      width: 354px;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--lacquer-deep);
+      /* Textura sutil de treliça chinesa (花窗) sobre laca escura */
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(184, 41, 33, 0.12) 0%, transparent 58%),
+        repeating-linear-gradient(45deg, rgba(212, 175, 55, 0.018) 0px, rgba(212, 175, 55, 0.018) 1px, transparent 1px, transparent 14px),
+        repeating-linear-gradient(-45deg, rgba(212, 175, 55, 0.018) 0px, rgba(212, 175, 55, 0.018) 1px, transparent 1px, transparent 14px);
+      color: var(--ivory);
+      overflow-x: hidden;
+      border: 1px solid rgba(212, 175, 55, 0.22);
     }
 
+    /* ─── CABEÇALHO IMPERIAL (宫墙红 + 祥云 + 印章) ─── */
     .header {
-      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 50%, #1abc9c 100%);
-      padding: 18px 20px 14px;
+      background:
+        radial-gradient(circle at 86% 26%, rgba(237, 208, 122, 0.20) 0%, transparent 52%),
+        linear-gradient(135deg, #5A0E0A 0%, #8F1D17 48%, #470A07 100%);
+      padding: 16px 18px 14px;
       position: relative;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.42);
     }
 
-    .header::before {
-      content: '🐼';
+    /* Marca d'água de nuvens auspiciosas tradicionais (祥云) */
+    .header-clouds {
       position: absolute;
-      right: -10px;
-      top: -8px;
-      font-family: 'Syne', sans-serif;
-      font-size: 42px;
-      font-weight: 800;
-      opacity: 0.15;
-      color: white;
-      letter-spacing: -2px;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.11;
+      pointer-events: none;
+    }
+
+    .header-titles {
+      position: relative;
+      z-index: 1;
     }
 
     .header h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 16px;
+      font-family: 'Cinzel', 'Noto Serif SC', serif;
+      font-size: 17px;
       font-weight: 800;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: white;
+      background: linear-gradient(180deg, #FFF8E7 0%, #EDD07A 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
     }
 
     .header p {
       font-size: 11px;
-      opacity: 0.75;
+      color: rgba(244, 235, 220, 0.82);
       margin-top: 2px;
-      color: white;
-      font-weight: 300;
+      font-weight: 400;
+      letter-spacing: 0.02em;
     }
 
+    /* Carimbo Imperial Chinês (印章 - Yìnzhāng) */
+    .imperial-seal {
+      position: relative;
+      z-index: 1;
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(145deg, #B5231B, #87140E);
+      border: 1.5px solid rgba(237, 208, 122, 0.82);
+      border-radius: 3px;
+      padding: 2px;
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.45),
+        inset 0 0 0 1px rgba(17, 11, 10, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .imperial-seal-inner {
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(244, 235, 220, 0.45);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      place-items: center;
+      font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+      font-size: 11.5px;
+      font-weight: 900;
+      line-height: 1;
+      color: #FAF0DC;
+    }
+
+    /* Faixa geométrica tradicional Huíwén (回纹 - Meandro da Longevidade) */
+    .huiwen-band {
+      height: 8px;
+      width: 100%;
+      background-color: #170F0D;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.24);
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .huiwen-band svg {
+      width: 100%;
+      height: 8px;
+      display: block;
+      opacity: 0.48;
+    }
+
+    /* ─── CORPO DO POPUP ─── */
     .body {
-      padding: 20px;
+      padding: 15px 17px 17px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 13px;
+    }
+
+    /* Placa emoldurada com cantoneiras chinesas (中式角花牌匾) */
+    .imperial-plaque {
+      position: relative;
+      background: linear-gradient(180deg, rgba(30, 20, 17, 0.94) 0%, rgba(22, 15, 13, 0.96) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.24);
+      border-radius: 4px;
+      padding: 13px 13px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .plaque-corner {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.72;
+      pointer-events: none;
+    }
+    .plaque-corner.tl { top: 3px; left: 3px; border-width: 1.5px 0 0 1.5px; }
+    .plaque-corner.tr { top: 3px; right: 3px; border-width: 1.5px 1.5px 0 0; }
+    .plaque-corner.bl { bottom: 3px; left: 3px; border-width: 0 0 1.5px 1.5px; }
+    .plaque-corner.br { bottom: 3px; right: 3px; border-width: 0 1.5px 1.5px 0; }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
     }
 
     .field-label {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      color: #888;
-      margin-bottom: 6px;
-      font-weight: 500;
+      color: var(--ivory-muted);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .field-label::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background: var(--gold);
+      transform: rotate(45deg);
+    }
+
+    /* Botão Sincronizar sem emoji */
+    .sync-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(180deg, #271A15 0%, #1B120E 100%);
+      border: 1px solid var(--gold-border);
+      color: var(--gold-bright);
+      font-family: inherit;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      padding: 3.5px 9px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sync-btn:hover {
+      background: linear-gradient(180deg, #352119 0%, #241611 100%);
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.18);
+    }
+
+    .sync-btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .sync-svg {
+      width: 11px;
+      height: 11px;
+      stroke: currentColor;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    .sync-btn.loading .sync-svg {
+      animation: imperial-spin 0.85s linear infinite;
+    }
+
+    @keyframes imperial-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     .input-wrapper {
       display: flex;
       align-items: center;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
+      background: var(--lacquer-input);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      border-radius: 4px;
       overflow: hidden;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .input-wrapper:focus-within {
-      border-color: #2ecc71;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.12);
     }
 
     .currency-badge {
-      padding: 0 12px;
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      color: #2ecc71;
-      background: #101e16;
-      height: 42px;
+      padding: 0 11px;
+      font-family: 'Noto Serif SC', serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      background: linear-gradient(180deg, #281613 0%, #1C100D 100%);
+      height: 37px;
       display: flex;
       align-items: center;
-      border-right: 1px solid #2a2a2a;
+      border-right: 1px solid rgba(212, 175, 55, 0.22);
+      white-space: nowrap;
     }
 
     input[type="number"] {
       flex: 1;
+      min-width: 0;
       background: transparent;
       border: none;
       outline: none;
-      padding: 0 12px;
-      height: 42px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      color: #f0ede6;
+      padding: 0 10px;
+      height: 37px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--ivory);
     }
 
-    input[type="number"]::placeholder { color: #444; }
+    input[type="number"]::placeholder {
+      color: var(--ash-dark);
+    }
 
     input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-
-    .rate-hint {
-      font-size: 11px;
-      color: #555;
-      margin-top: 4px;
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
     }
 
-    .divider {
+    .unit-suffix {
+      padding: 0 11px;
+      font-size: 11.5px;
+      color: var(--ash);
+      font-weight: 600;
+    }
+
+    /* Status da cotação com ponto de laca/jade (zero emojis) */
+    .rate-meta {
+      font-size: 10.5px;
+      color: var(--ash);
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rate-meta::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold-Soft);
+      flex-shrink: 0;
+    }
+
+    .rate-meta.auto {
+      color: var(--jade-bright);
+    }
+    .rate-meta.auto::before {
+      background: var(--jade-bright);
+      box-shadow: 0 0 6px rgba(99, 199, 164, 0.55);
+    }
+
+    .rate-meta.error {
+      color: #F08C7D;
+    }
+    .rate-meta.error::before {
+      background: var(--cinnabar-bright);
+    }
+
+    /* Spread e Presets */
+    .spread-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .spread-input-box {
+      width: 96px;
+      flex-shrink: 0;
+    }
+
+    .spread-input-box input[type="number"] {
+      height: 33px;
+      font-size: 13px;
+      padding: 0 8px;
+    }
+
+    .spread-input-box .currency-badge {
+      height: 33px;
+      padding: 0 9px;
+      font-size: 12px;
+    }
+
+    .spread-input-box .unit-suffix {
+      padding: 0 8px;
+      font-size: 11px;
+    }
+
+    .preset-chips {
+      display: flex;
+      gap: 5px;
+      flex: 1;
+    }
+
+    .preset-chip {
+      flex: 1;
+      height: 33px;
+      background: var(--lacquer-input);
+      border: 1px solid rgba(212, 175, 55, 0.18);
+      border-radius: 3px;
+      color: var(--ash);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .preset-chip:hover {
+      border-color: rgba(212, 175, 55, 0.45);
+      color: var(--ivory);
+    }
+
+    .preset-chip.active {
+      background: linear-gradient(180deg, rgba(184, 41, 33, 0.34) 0%, rgba(110, 19, 14, 0.48) 100%);
+      border-color: var(--gold);
+      color: var(--gold-bright);
+      box-shadow: inset 0 0 8px rgba(212, 175, 55, 0.12);
+    }
+
+    .rate-hint {
+      font-size: 10.5px;
+      color: var(--gold-bright);
+      background: rgba(19, 13, 11, 0.85);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      border-left: 2.5px solid var(--cinnabar-bright);
+      border-radius: 3px;
+      padding: 6px 9px;
+      margin-top: 7px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+    }
+
+    .rate-hint:empty {
+      display: none;
+    }
+
+    /* ─── DIVISÓRIA ORNAMENTAL CHINESA (盘长纹菱形) ─── */
+    .chinese-divider {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 1px 0;
+    }
+
+    .chinese-divider::before,
+    .chinese-divider::after {
+      content: '';
+      flex: 1;
       height: 1px;
-      background: #1e1e1e;
+    }
+
+    .chinese-divider::before {
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.36));
+    }
+
+    .chinese-divider::after {
+      background: linear-gradient(270deg, transparent, rgba(212, 175, 55, 0.36));
+    }
+
+    .divider-knot {
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--gold);
+      transform: rotate(45deg);
+      position: relative;
+      opacity: 0.78;
+    }
+
+    .divider-knot::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--cinnabar);
+    }
+
+    /* ─── LISTA DE FUNCIONALIDADES COM SELOS CALIGRÁFICOS (字印) ─── */
+    .toggles-group {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
     }
 
     .toggle-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
+      padding: 7px 9px;
+      background: rgba(26, 18, 16, 0.68);
+      border: 1px solid rgba(212, 175, 55, 0.13);
+      border-radius: 4px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .toggle-row:hover {
+      border-color: rgba(212, 175, 55, 0.32);
+      background: rgba(34, 23, 20, 0.85);
+    }
+
+    .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .char-seal {
+      width: 26px;
+      height: 26px;
+      border-radius: 3px;
+      background: linear-gradient(145deg, #261613, #170D0B);
+      border: 1px solid rgba(212, 175, 55, 0.42);
+      color: var(--gold-bright);
+      font-family: 'Noto Serif SC', 'Songti SC', serif;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+      user-select: none;
     }
 
     .toggle-info h3 {
-      font-size: 13px;
-      font-weight: 500;
-      color: #e0ddd6;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ivory);
+      letter-spacing: 0.01em;
     }
 
     .toggle-info p {
-      font-size: 11px;
-      color: #555;
-      margin-top: 2px;
+      font-size: 10.5px;
+      color: var(--ash);
+      margin-top: 1px;
     }
 
     .toggle {
       position: relative;
-      width: 40px;
-      height: 22px;
+      width: 38px;
+      height: 20px;
       flex-shrink: 0;
     }
 
-    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
 
     .slider {
       position: absolute;
       cursor: pointer;
       inset: 0;
-      background: #2a2a2a;
-      border-radius: 22px;
-      transition: 0.3s;
+      background: #241916;
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      border-radius: 20px;
+      transition: 0.25s ease;
     }
 
-    .slider:before {
+    .slider::before {
       content: '';
       position: absolute;
-      width: 16px;
-      height: 16px;
-      left: 3px;
-      bottom: 3px;
-      background: #666;
+      width: 14px;
+      height: 14px;
+      left: 2px;
+      bottom: 2px;
+      background: #7A6B5D;
       border-radius: 50%;
-      transition: 0.3s;
+      transition: 0.25s ease;
     }
 
-    input:checked + .slider { background: #27ae60; }
-    input:checked + .slider:before {
+    input:checked + .slider {
+      background: linear-gradient(135deg, #8F1D17, #C93329);
+      border-color: rgba(237, 208, 122, 0.65);
+    }
+
+    input:checked + .slider::before {
       transform: translateX(18px);
-      background: white;
+      background: var(--gold-bright);
+      box-shadow: 0 0 6px rgba(237, 208, 122, 0.6);
     }
 
+    /* ─── BOTÃO SALVAR IMPERIAL COM REFLEXO DE SEDA DOURADA ─── */
     .save-btn {
+      position: relative;
+      overflow: hidden;
       width: 100%;
-      height: 42px;
-      background: linear-gradient(135deg, #27ae60, #2ecc71);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
+      height: 40px;
+      background: linear-gradient(135deg, #7D1712 0%, #B82921 50%, #7D1712 100%);
+      border: 1px solid rgba(237, 208, 122, 0.58);
+      border-radius: 4px;
+      color: var(--ivory);
+      font-family: 'Cinzel', 'Noto Serif SC', serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
+      box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 240, 200, 0.22);
+      transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
-    .save-btn:hover { opacity: 0.88; }
-    .save-btn:active { transform: scale(0.98); }
+    .save-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -110%;
+      width: 65%;
+      height: 100%;
+      background: linear-gradient(
+        105deg,
+        transparent 0%,
+        rgba(237, 208, 122, 0.26) 50%,
+        transparent 100%
+      );
+      transition: left 0.55s ease;
+      pointer-events: none;
+    }
+
+    .save-btn:hover {
+      border-color: var(--gold-bright);
+      box-shadow:
+        0 6px 18px rgba(184, 41, 33, 0.38),
+        inset 0 1px 0 rgba(255, 240, 200, 0.35);
+    }
+
+    .save-btn:hover::after {
+      left: 145%;
+    }
+
+    .save-btn:active {
+      transform: scale(0.988);
+    }
 
     .status {
       text-align: center;
       font-size: 11px;
-      color: #3d9e5a;
+      color: var(--gold-bright);
       height: 14px;
-      transition: opacity 0.3s;
+      margin-top: -4px;
+      letter-spacing: 0.03em;
+      transition: opacity 0.3s ease;
       opacity: 0;
     }
 
-    .status.show { opacity: 1; }
+    .status.show {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>Panda Price</h1>
-    <p>Configurações da extensão</p>
+    <!-- Nuvens tradicionais chinesas (祥云) em SVG puro -->
+    <svg class="header-clouds" viewBox="0 0 360 80" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M25,58 C14,58 10,48 19,43 C21,32 36,30 43,39 C52,36 62,44 58,53 C65,55 63,64 53,64 L25,64 Z" fill="none" stroke="#EDD07A" stroke-width="1.3"/>
+      <path d="M210,24 C200,24 197,15 205,11 C208,2 221,1 227,9 C235,6 244,13 240,20 C246,22 244,29 236,29 L210,29 Z" fill="none" stroke="#EDD07A" stroke-width="1.2"/>
+      <path d="M130,68 C122,68 119,60 126,56 C128,48 139,47 145,54 C152,52 159,58 156,64 L130,64 Z" fill="none" stroke="#EDD07A" stroke-width="1.1"/>
+    </svg>
+
+    <div class="header-titles">
+      <h1>Panda Price</h1>
+      <p>Conversão e Inspeção de Anúncios</p>
+    </div>
+
+    <!-- Carimbo Imperial 2x2: 熊猫通宝 (Moeda Imperial Panda) -->
+    <div class="imperial-seal" title="Xióngmāo Tōngbǎo — Panda Price">
+      <div class="imperial-seal-inner">
+        <span>熊</span><span>猫</span>
+        <span>通</span><span>宝</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Friso geométrico chinês Huíwén (回纹) -->
+  <div class="huiwen-band" aria-hidden="true">
+    <svg viewBox="0 0 360 8" preserveAspectRatio="none">
+      <defs>
+        <pattern id="huiwen" x="0" y="0" width="16" height="8" patternUnits="userSpaceOnUse">
+          <path d="M1,7 L1,1 L13,1 L13,5 L5,5 L5,3 L10,3 M15,1 L15,7 L3,7" fill="none" stroke="#D4AF37" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="360" height="8" fill="url(#huiwen)" />
+    </svg>
   </div>
 
   <div class="body">
-    <!-- Cotação -->
-    <div>
-      <div class="field-label">Cotação do Yuan (¥)</div>
-      <div class="input-wrapper">
-        <span class="currency-badge">1 ¥ =</span>
-        <input type="number" id="rate" placeholder="0.00" step="0.01" min="0.01" />
-        <span style="padding:0 12px; font-size:13px; color:#888;">R$</span>
+    <!-- Placa Principal de Câmbio e Spread -->
+    <div class="imperial-plaque">
+      <span class="plaque-corner tl"></span>
+      <span class="plaque-corner tr"></span>
+      <span class="plaque-corner bl"></span>
+      <span class="plaque-corner br"></span>
+
+      <!-- 1. Cotação Automática / Manual -->
+      <div>
+        <div class="label-row">
+          <span class="field-label">Cotação do Yuan (CNY)</span>
+          <button type="button" class="sync-btn" id="syncRateBtn" title="Buscar cotação comercial atualizada">
+            <svg class="sync-svg" viewBox="0 0 16 16" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M13.5 8a5.5 5.5 0 0 1-9.35 3.92M2.5 8a5.5 5.5 0 0 1 9.35-3.92"/>
+              <polyline points="12 1.8 12.2 4.3 9.7 4.5"/>
+              <polyline points="4 14.2 3.8 11.7 6.3 11.5"/>
+            </svg>
+            <span id="syncBtnText">Sincronizar</span>
+          </button>
+        </div>
+        <div class="input-wrapper">
+          <span class="currency-badge">1 ¥ =</span>
+          <input type="number" id="rate" placeholder="0.0000" step="0.0001" min="0.0001" />
+          <span class="unit-suffix">BRL</span>
+        </div>
+        <div class="rate-meta" id="rate-meta">Carregando cotação...</div>
       </div>
-      <div class="rate-hint" id="rate-hint"></div>
+
+      <!-- 2. Simulador de Spread / Taxa -->
+      <div>
+        <div class="label-row">
+          <span class="field-label">Spread / Taxa de Agente ou IOF</span>
+        </div>
+        <div class="spread-row">
+          <div class="input-wrapper spread-input-box">
+            <span class="currency-badge">+</span>
+            <input type="number" id="spread" placeholder="0" step="0.5" min="0" max="100" value="0" />
+            <span class="unit-suffix">%</span>
+          </div>
+          <div class="preset-chips" id="spreadPresets">
+            <button type="button" class="preset-chip" data-spread="0">0%</button>
+            <button type="button" class="preset-chip" data-spread="4">+4%</button>
+            <button type="button" class="preset-chip" data-spread="6">+6%</button>
+            <button type="button" class="preset-chip" data-spread="8">+8%</button>
+          </div>
+        </div>
+        <div class="rate-hint" id="rate-hint"></div>
+      </div>
     </div>
 
-    <div class="divider"></div>
-
-    <!-- Toggle conversão -->
-    <div class="toggle-row">
-      <div class="toggle-info">
-        <h3>💱 Converter preços</h3>
-        <p>Exibir valores em R$ ao lado de ¥</p>
-      </div>
-      <label class="toggle">
-        <input type="checkbox" id="enableConversion" checked />
-        <span class="slider"></span>
-      </label>
+    <div class="chinese-divider" aria-hidden="true">
+      <span class="divider-knot"></span>
     </div>
 
-    <!-- Toggle popup -->
-    <div class="toggle-row">
-      <div class="toggle-info">
-        <h3>🚫 Bloquear pop-up de login</h3>
-        <p>Remove o aviso de login automático</p>
+    <!-- 3. Toggles de Funcionalidades com Selos Caligráficos -->
+    <div class="toggles-group">
+      <div class="toggle-row">
+        <div class="toggle-left">
+          <span class="char-seal" title="Huì — Câmbio">汇</span>
+          <div class="toggle-info">
+            <h3>Converter preços</h3>
+            <p>Exibir valores em R$ ao lado de ¥</p>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="enableConversion" checked />
+          <span class="slider"></span>
+        </label>
       </div>
-      <label class="toggle">
-        <input type="checkbox" id="blockPopup" checked />
-        <span class="slider"></span>
-      </label>
+
+      <div class="toggle-row">
+        <div class="toggle-left">
+          <span class="char-seal" title="Píng — Bloqueio">屏</span>
+          <div class="toggle-info">
+            <h3>Bloquear pop-up de login</h3>
+            <p>Oculta login preservando o Captcha</p>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="blockPopup" checked />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-left">
+          <span class="char-seal" title="Yì — Tradução">译</span>
+          <div class="toggle-info">
+            <h3>Assistente de busca PT → ZH</h3>
+            <p>Tradutor para chinês e filtros rápidos</p>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="enableSearchHelper" checked />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-left">
+          <span class="char-seal" title="Jiàn — Inspeção">鉴</span>
+          <div class="toggle-info">
+            <h3>Alertas anti-cilada e gírias</h3>
+            <p>Detecta sucata, defeitos e condições</p>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="enableSlangAlerts" checked />
+          <span class="slider"></span>
+        </label>
+      </div>
     </div>
 
-    <div class="divider"></div>
-
-    <button class="save-btn" id="saveBtn">Salvar configurações</button>
-    <div class="status" id="status">✓ Configurações salvas!</div>
+    <button class="save-btn" id="saveBtn">Salvar Configurações</button>
+    <div class="status" id="status">Configurações aplicadas</div>
   </div>
 
   <script src="popup.js"></script>
